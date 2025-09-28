@@ -1,0 +1,51 @@
+@startuml
+!include <C4/C4_Container>
+
+Person_Ext(user, "Пользователь")
+System_Ext(device, "Устройство", "Устройства (датчики, реле, камеры) установленные в домах")
+System_Ext(video_hosting, "Видео-хостинг", "Внешний сервис для хранения и потоковой передачи видео")
+
+AddElementTag("getway", $bgColor="#57dd2aff", $fontColor="black")
+
+Container(web_interface, "Веб-сайт","React", "Веб-интерфейс для управления системой и просмотра данных")
+Container(mobile_app, "Приложение", "Kotlin/Swift", "Мобильное приложение для управления системой и просмотра данных(позже)")
+
+
+System_Boundary(s1, "Система ТеплыйДом") {
+    Container(api_gateway, "API Gateway", "Kong/Nginx", "Обеспечивает единый вход в систему, маршрутизирует запросы к соответствующим микросервисам", $tags = "getway")
+
+    Container(user_service, "Сервис ползователей", "GO", "Управляет регистрацией, входом и безопасностью пользователей")
+    Container(device_service, "Сервис устройств", "GO", "Управляет устройствами, хранит информацию об устройствах и их состоянии")
+    Container(telemetry_service, "Сервис телеметрии", "GO", "Собирает и обрабатывает данные с устройств в реальном времени")
+    Container(video_service, "Сервис видео", "GO", "Обрабатывает и хранит видео с камер, предоставляет доступ к видео по запросу")
+
+    ContainerDb(user_db, "База данных пользователей", "PostgreSQL", "Хранит информацию о пользователях, включая учетные данные и настройки")
+    ContainerDb(device_db, "База данных устройств", "PostgreSQL", "Хранит информацию об устройствах, их состоянии и конфигурации")
+    ContainerDb(telemetry_db, "База данных телеметрии", "PostgreSQL", "Хранит исторические данные телеметрии для анализа и отчетности")
+
+    Container(external_device_api_getway, "API шлюз устройств", "Kong/Nginx", "Обеспечивает связь между устройствами и системой, принимает данные от устройств и отправляет команды", $tags = "getway")
+}
+
+Rel(user, web_interface, "Просмотр информации о устройствах и управление ими", "HTTPS")
+Rel(user, mobile_app, "")
+
+Rel(web_interface, api_gateway, "Отправка запросов к API")
+Rel(mobile_app, api_gateway, "Отправка запросов к API")
+Rel(api_gateway, user_service, "Маршрутизация запросов пользователей")
+Rel(api_gateway, device_service, "Маршрутизация запросов устройств")
+Rel(api_gateway, telemetry_service, "Маршрутизация запросов телеметрии")
+Rel(api_gateway, video_service, "Маршрутизация запросов видео")
+
+Rel(user_service, user_db, "Чтение и запись данных пользователей")
+Rel(device_service, device_db, "Чтение и запись данных устройств")
+Rel(telemetry_service, telemetry_db, "Чтение и запись данных телеметрии")
+
+Rel(telemetry_service, external_device_api_getway, "Получение данных от устройств")
+Rel(device_service, external_device_api_getway, "Отправка команд устройствам")
+Rel(video_service, external_device_api_getway, "Получение видео с камер")
+
+Rel(video_service, video_hosting, "Хранение и потоковая передача видео")
+Rel(device, external_device_api_getway, "Отправка данных и получение команд")
+
+
+@enduml

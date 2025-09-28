@@ -65,7 +65,10 @@
 
 **Диаграмма контейнеров (Containers)**
 
-Добавьте диаграмму.
+![Microservices Container Diagram](out/diagrams/microservices-container-diagram/microservices-container-diagram.png "Microservices Container Diagram")
+
+
+[Код схемы](diagrams/microservices-container-diagram.puml)
 
 **Диаграмма компонентов (Components)**
 
