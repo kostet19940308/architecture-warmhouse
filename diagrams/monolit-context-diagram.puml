@@ -1,0 +1,16 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Monolith Context Diagram
+
+Person_Ext(user, "Пользователь")
+
+System(warmhouse, "Умный дом", "Система удалённого управление отоплением в доме и просмотра температуры")
+
+System_Ext(device, "Устройство", "Устройства установленные в домах(считывание и управление температурой)")
+
+Rel(user, warmhouse, "Просмотр информации о температуры и управление температурой в доме")
+Rel(warmhouse, device, "Управляет устройством, запрашивает данные")
+
+
+@enduml
