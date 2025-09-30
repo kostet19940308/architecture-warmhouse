@@ -72,11 +72,17 @@
 
 **Диаграмма компонентов (Components)**
 
-Добавьте диаграмму для каждого из выделенных микросервисов.
+![Microservices Container Diagram](out/diagrams/microservices-components-diagram/microservices-components-diagram.png "Microservices Container Diagram")
+
+
+[Код схемы](diagrams/microservices-components-diagram.puml)
 
 **Диаграмма кода (Code)**
 
-Добавьте одну диаграмму или несколько.
+![Microservices Container Diagram](out/diagrams/microservices-code-diagram/microservices-code-diagram.png "Microservices Container Diagram")
+
+
+[Код схемы](diagrams/microservices-code-diagram.puml)
 
 # Задание 3. Разработка ER-диаграммы
 
