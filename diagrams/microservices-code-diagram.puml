@@ -1,0 +1,93 @@
+@startuml
+
+
+interface IDeviceAdapter {
+  +sendCommand(command: DeviceCommand)
+}
+
+
+class DeviceService {
+  -db : DeviceBD
+  -adapters : List<IDeviceAdapter>
+  +registerDevice(device: Device)
+  +updateState(deviceId: int, status: string)
+  +executeCommand(command: DeviceCommand)
+}
+
+class ScenarioService {
+  -db : DeviceBD
+  -deviceService : DeviceService
+  +saveScenario(scenario: Scenario)
+  +runScenario(scenarioId: int)
+}
+
+class FirstAdapter {
+  +sendCommand(command: DeviceCommand)
+}
+
+class SecondAdapter {
+  +sendCommand(command: DeviceCommand)
+}
+
+class DeviceBD {
+  +saveDevice(device: Device)
+  +loadDevice(id: int) : Device
+  +saveScenario(scenario: Scenario)
+  +loadScenario(id: int) : Scenario
+  +saveCommand(command: Command)
+  +loadCommand(id: int) : Command
+  +saveDeviceCommand(dc: DeviceCommand)
+  +loadDeviceCommand(id: int) : DeviceCommand
+}
+
+class Device {
+  +id : int
+  +name : string
+  +type : string
+  +status : string
+  +companyId : int
+}
+
+class Scenario {
+  +id : int
+  +name : string
+  +description : string
+}
+
+class ScenarioStep {
+  +id : int
+  +scenarioId : int
+  +commandId : int
+  +orderIndex : int
+}
+
+class Command {
+  +id : int
+  +type : string
+  +payload : string
+  +createdAt : datetime
+}
+
+class DeviceCommand {
+  +id : int
+  +deviceId : int
+  +commandId : int
+  +status : string
+  +executedAt : datetime
+}
+
+ScenarioService --> DeviceService : использует
+ScenarioService --> DeviceBD : читает/пишет
+DeviceService --> DeviceBD : читает/пишет
+
+Scenario --> ScenarioStep : содержит *
+ScenarioStep --> Command : указывает
+
+DeviceCommand --> Device : применяется к
+DeviceCommand --> Command : реализует
+
+FirstAdapter ..|> IDeviceAdapter
+SecondAdapter ..|> IDeviceAdapter
+DeviceService --> IDeviceAdapter : вызывает
+
+@enduml
