@@ -1,0 +1,355 @@
+openapi: '3.0.3'
+info:
+  title: DeviceMicroservice API Documentation
+  description: API documentation for DeviceMicroservice
+  version: '1.0'
+servers:
+  - url: https://localhost:8080/
+    description: Local server
+tags:
+  - name: device
+    description: Device related endpoints
+  - name: scenario
+    description: Scenario related endpoints
+paths:
+  /devices:
+    get:
+      tags: 
+        - device
+      summary: Retrieve a list of devices
+      responses:
+        '200':
+          description: List of devices retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags: 
+        - device
+      summary: Register a new device
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCreateRequest'
+      responses:
+        '201':
+          description: Device created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /devices/{deviceId}:
+    get:
+      tags: 
+        - device
+      summary: Get device information by ID
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    patch:
+      tags: 
+        - device
+      summary: Update device status
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Device status updated successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /devices/{deviceId}/commands:
+    post:
+      tags: 
+        - device
+      summary: Send a command to a device
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommandRequest'
+      responses:
+        '202':
+          description: Command accepted for execution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceCommand'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /scenarios:
+    get:
+      tags: 
+        - scenario
+      summary: get list of scenarios
+      responses:
+        '200':
+          description: List of scenarios retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Scenario'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags: 
+        - scenario
+      summary: Create a new scenario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScenarioCreateRequest'
+      responses:
+        '201':
+          description: Scenario created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenario'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError' 
+
+  /scenarios/{scenarioId}:
+    get:
+      tags: 
+        - scenario
+      summary: Get scenario details by ID
+      parameters:
+        - name: scenarioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Scenario details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scenario'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags: 
+        - scenario
+      summary: Delete a scenario by ID
+      parameters:
+        - name: scenarioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Scenario deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /scenarios/{scenarioId}/run:
+    post:
+      tags: 
+        - scenario
+      summary: Run a scenario by ID
+      parameters:
+        - name: scenarioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '202':
+          description: Scenario execution started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    Device:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        type: { type: string }
+        status: { type: string }
+        manufacturer: { type: string }
+        serialNumber: { type: string }
+        ownerId: { type: integer }
+    DeviceCreateRequest:
+      type: object
+      required: [name, type, serialNumber]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        manufacturer: { type: string }
+        serialNumber: { type: string }
+    CommandRequest:
+      type: object
+      required: [type]
+      properties:
+        type: { type: string, example: "turn_on" }
+        payload: { type: object, additionalProperties: true }
+    DeviceCommand:
+      type: object
+      properties:
+        id: { type: integer }
+        deviceId: { type: integer }
+        commandId: { type: integer }
+        status: { type: string }
+        executedAt: { type: string, format: date-time }
+
+    Scenario:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+        ownerId: { type: integer }
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScenarioStep'
+    ScenarioStep:
+      type: object
+      properties:
+        id: { type: integer }
+        commandId: { type: integer }
+        orderIndex: { type: integer }
+    ScenarioCreateRequest:
+      type: object
+      required: [name, steps]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScenarioStep'
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Bad Request"
+        message:
+          type: string
+          example: "Incorrect input data"
+
+  responses:
+    BadRequest:
+      description: "Incorrect input data"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            invalidField:
+              summary: "Incorrect field value"
+              value:
+                error: "Bad Request"
+                message: "Field 'type' is required"
+    UnauthorizedError:
+      description: "Unauthorized user"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Unauthorized"
+            message: "Token is missing or invalid"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Not Found"
+            message: "Device not found"
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Internal Server Error"
+            message: "Unexpected error occurred"      
