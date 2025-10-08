@@ -12,7 +12,7 @@ tags:
   - name: scenario
     description: Scenario related endpoints
 paths:
-  /devices:
+  /v1/devices:
     get:
       tags: 
         - device
@@ -51,7 +51,7 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /devices/{deviceId}:
+  /v1/devices/{deviceId}:
     get:
       tags: 
         - device
@@ -103,7 +103,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /devices/{deviceId}/commands:
+  /v1/devices/{deviceId}/commands:
     post:
       tags: 
         - device
@@ -134,7 +134,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /scenarios:
+  /v1/scenarios:
     get:
       tags: 
         - scenario
@@ -175,7 +175,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError' 
 
-  /scenarios/{scenarioId}:
+  /v1/scenarios/{scenarioId}:
     get:
       tags: 
         - scenario
@@ -216,7 +216,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /scenarios/{scenarioId}/run:
+  /v1/scenarios/{scenarioId}/run:
     post:
       tags: 
         - scenario

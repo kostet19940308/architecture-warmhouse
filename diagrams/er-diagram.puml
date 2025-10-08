@@ -13,7 +13,13 @@ entity Device {
   status : string
   manufacturer : string
   serialNumber : string
-  ownerId : int
+}
+
+entity UserDeviceAccess {
+  *id : int
+  userId : int
+  deviceId : int
+  accessLevel : string
 }
 
 entity Telemetry {
@@ -54,7 +60,8 @@ entity ScenarioStep {
 }
 
 
-User ||--o{ Device 
+User ||--o{ UserDeviceAccess 
+Device ||--o{ UserDeviceAccess
 Device ||--o{ Telemetry
 Device ||--o{ DeviceCommand 
 Command ||--o{ DeviceCommand
