@@ -1,0 +1,72 @@
+@startuml
+entity User {
+  *id : int
+  email : string
+  passwordHash : string
+  profileSettings : json
+}
+
+entity Device {
+  *id : int
+  name : string
+  type : string
+  status : string
+  manufacturer : string
+  serialNumber : string
+}
+
+entity UserDeviceAccess {
+  *id : int
+  userId : int
+  deviceId : int
+  accessLevel : string
+}
+
+entity Telemetry {
+  *id : int
+  deviceId : int
+  timestamp : datetime
+  metricType : string
+  value : string
+}
+
+entity Command {
+  *id : int
+  type : string
+  payload : string
+  createdAt : datetime
+}
+
+entity DeviceCommand {
+  *id : int
+  deviceId : int
+  commandId : int
+  status : string
+  executedAt : datetime
+}
+
+entity Scenario {
+  *id : int
+  name : string
+  description : string
+  ownerId : int
+}
+
+entity ScenarioStep {
+  *id : int
+  scenarioId : int
+  commandId : int
+  orderIndex : int
+}
+
+
+User ||--o{ UserDeviceAccess 
+Device ||--o{ UserDeviceAccess
+Device ||--o{ Telemetry
+Device ||--o{ DeviceCommand 
+Command ||--o{ DeviceCommand
+User ||--o{ Scenario 
+Scenario ||--o{ ScenarioStep 
+Command ||--o{ ScenarioStep
+
+@enduml

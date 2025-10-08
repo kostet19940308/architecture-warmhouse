@@ -1,0 +1,28 @@
+@startuml
+!include <C4/C4_Container>
+
+AddElementTag("getway", $bgColor="#57dd2aff", $fontColor="black")
+
+Container(api_gateway, "API Gateway", "Kong/Nginx", $tags = "getway")
+
+System_Boundary(device_microservice, "Микросервис устройств") {
+    Container(device_control_service, "Сервис управления устройствами", "GO", "Управляет устройствами, сохраняет информацию об устройствах и их состоянии")
+    Container(scenario_service, "Сервис сценариев", "GO", "Управляет сценариями автоматизации на основе данных с устройств и пользовательских настроек")
+    Container(adapter_1_service, "Адаптер для устройства 1", "GO", "Обеспечивает взаимодействие с устройством 1 через его API")
+    Container(adapter_2_service, "Адаптер для устройства 2", "GO", "Обеспечивает взаимодействие с устройством 2 через его API")
+    ContainerDb(device_db, "База данных устройств", "PostgreSQL", "Хранит информацию об устройствах, их состоянии и конфигурации")
+}
+
+Container(external_device_api_getway, "API шлюз устройств", "Kong/Nginx", "", $tags = "getway")
+
+Rel(api_gateway, device_control_service, "Маршрутизация запросов устройств")
+Rel(api_gateway, scenario_service, "Маршрутизация запросов сценариев")
+Rel(device_control_service, device_db, "Чтение и запись данных устройств")
+Rel(scenario_service, device_db, "Чтение и запись данных устройств")
+Rel(device_control_service, adapter_1_service, "Взаимодействие с устройством 1")
+Rel(device_control_service, adapter_2_service, "Взаимодействие с устройством 2")
+Rel(adapter_1_service, external_device_api_getway, "Взаимодействие с устройством 1 через его API")
+Rel(adapter_2_service, external_device_api_getway, "Взаимодействие с устройством 2 через его API")
+Rel(scenario_service, device_control_service, "Получение данных устройств для выполнения сценариев" )
+
+@enduml
